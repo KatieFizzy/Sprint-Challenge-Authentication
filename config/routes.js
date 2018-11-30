@@ -27,6 +27,11 @@ function generateToken(user) {
 function register(req, res) {
     // implement user registration
    const creds = req.body;
+   if (!creds.username|| !creds.password) {
+    const errorMessage = "Please provide both a username and password"; 
+    res.status(400).json({ errorMessage});
+    return
+} 
    const hash = bcrypt.hashSync(creds.password, 4); 
    creds.password = hash;
  
