@@ -26,11 +26,31 @@ function generateToken(user) {
 
 function register(req, res) {
   // implement user registration
+  
 }
 
 function login(req, res) {
   // implement user login
-}
+  const creds = req.body;
+  if (!creds.username|| !creds.password) {
+    const errorMessage = "Please provide both a username and password"; 
+    res.status(400).json({ errorMessage});
+    return
+} 
+  db('users')
+    .where({ username: creds.username })
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(creds.password, user.password)) {
+        const token = generateToken(user);
+        res.status(200).json({ message: 'welcome!', token });
+      } else {
+        res.status(401).json({ message: 'you shall not pass!!' });
+      }
+    })
+    .catch(err => res.json(err));
+};
+
 
 function getJokes(req, res) {
   axios
